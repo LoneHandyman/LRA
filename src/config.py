@@ -25,6 +25,7 @@ listops = {
                   "attention_dropout":0.1,
                   "pooling_mode":"MEAN",
                   "num_classes":10,
+                  "d_conv": 5,
               },
               "training":{
                   "batch_size":32, 
@@ -71,6 +72,7 @@ pathfinder = {
                "attention_dropout":0.1,
                "pooling_mode":"MEAN",
                "num_classes": 2,
+               "d_conv": 5,
            },
            "training":{
                "batch_size":128, 
@@ -122,6 +124,7 @@ retrieval={
                   "attention_dropout":0.1,
                   "pooling_mode":"MEAN",
                   "num_classes": 2,
+                  "d_conv": 5,
               },
               "training":{
                   "batch_size":16, 
@@ -173,6 +176,7 @@ text={
              "attention_dropout":0.1,
              "pooling_mode":"MEAN",
              "num_classes": 2,
+             "d_conv": 5,
          },
          "training":{
              "batch_size":32,
@@ -225,6 +229,7 @@ image={
             "attention_dropout":0.1,
             "pooling_mode":"MEAN",
             "num_classes": 10,
+            "d_conv": 5,
         },
         "training":{
             "batch_size":256, 

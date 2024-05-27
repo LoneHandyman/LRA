@@ -4,6 +4,7 @@ import torch.nn as nn
 import math
 
 from models.model_transformer import Model
+from models.summernet import SummeRNet
 
 def pooling(inp, mode):
     if mode == "CLS":

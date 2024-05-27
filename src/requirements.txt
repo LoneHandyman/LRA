@@ -1,5 +1,5 @@
-torch==1.8.0
-transformers==4.5.0
+torch
+transformers
 performer-pytorch
 tensorboard
 axial_positional_embedding
