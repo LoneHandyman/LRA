@@ -13,8 +13,8 @@ listops = {
               "model":{
                   "learn_pos_emb":True,
                   "tied_weights":False,
-                  "embedding_dim":64, 
-                  "transformer_dim":64, 
+                  "embedding_dim":256, 
+                  "transformer_dim":256, 
                   "transformer_hidden_dim":128, 
                   "head_dim":32, 
                   "num_head":2, 
@@ -25,10 +25,9 @@ listops = {
                   "attention_dropout":0.1,
                   "pooling_mode":"MEAN",
                   "num_classes":10,
-                  "d_conv": 5,
               },
               "training":{
-                  "batch_size":32, 
+                  "batch_size":16, 
                   "learning_rate":0.0001,
                   "warmup":1000,
                   "lr_decay":"linear",
@@ -53,15 +52,15 @@ listops = {
                   "informer":{"bz_rate":1,"in_nb_features":128},
                   "reformer":{"bz_rate":1,"num_hash":2},
                   "bigbird":{"bz_rate":1,"num_random_blocks":3, "block_size":64},
-
+                  "summernet":{"bz_rate":1,"d_conv":5},
                   }
           }
 pathfinder = {
            "model":{
                "learn_pos_emb":True,
                "tied_weights":False,
-               "embedding_dim":64, 
-               "transformer_dim":64, 
+               "embedding_dim":256, 
+               "transformer_dim":256, 
                "transformer_hidden_dim":128, 
                "head_dim":32,
                "num_head":2, 
@@ -72,10 +71,9 @@ pathfinder = {
                "attention_dropout":0.1,
                "pooling_mode":"MEAN",
                "num_classes": 2,
-               "d_conv": 5,
            },
            "training":{
-               "batch_size":128, 
+               "batch_size":64, 
                "learning_rate":0.0002,
                "warmup":312, 
                "lr_decay":"linear",
@@ -100,7 +98,7 @@ pathfinder = {
                "informer":{"bz_rate":2,"in_nb_features":128},
                "bigbird":{"bz_rate":1,"num_random_blocks":3, "block_size":64},
                "reformer":{"bz_rate":1,"num_hash":2},
-
+               "summernet":{"bz_rate":1,"d_conv":5},
            }
        }
 retrieval={
@@ -112,8 +110,8 @@ retrieval={
               "model":{
                   "learn_pos_emb":True,
                   "tied_weights":False,
-                  "embedding_dim":64, 
-                  "transformer_dim":64, 
+                  "embedding_dim":256, 
+                  "transformer_dim":256, 
                   "transformer_hidden_dim":128, 
                   "head_dim":32, 
                   "num_head":2, 
@@ -124,10 +122,9 @@ retrieval={
                   "attention_dropout":0.1,
                   "pooling_mode":"MEAN",
                   "num_classes": 2,
-                  "d_conv": 5,
               },
               "training":{
-                  "batch_size":16, 
+                  "batch_size":8, 
                   "learning_rate":0.0002,
                   "warmup":800,
                   "lr_decay":"linear",
@@ -153,6 +150,7 @@ retrieval={
                   "informer":{"bz_rate":1,"in_nb_features":128},
                   "bigbird":{"bz_rate":1,"num_random_blocks":3, "block_size":64},
                   "reformer":{"bz_rate":1,"num_hash":2},
+                  "summernet":{"bz_rate":1,"d_conv":5},
               }
           }
 text={
@@ -164,8 +162,8 @@ text={
          "model":{
              "learn_pos_emb":True,
              "tied_weights":False,
-             "embedding_dim":64, 
-             "transformer_dim":64, 
+             "embedding_dim":256, 
+             "transformer_dim":256, 
              "transformer_hidden_dim":128, 
              "head_dim":32, 
              "num_head":2, 
@@ -176,10 +174,9 @@ text={
              "attention_dropout":0.1,
              "pooling_mode":"MEAN",
              "num_classes": 2,
-             "d_conv": 5,
          },
          "training":{
-             "batch_size":32,
+             "batch_size":16,
              "learning_rate":0.0001,
              "warmup":80, 
              "lr_decay":"linear",
@@ -204,6 +201,7 @@ text={
              "informer":{"bz_rate":1,"in_nb_features":128},
              "bigbird":{"bz_rate":1,"num_random_blocks":3, "block_size":64},
              "reformer":{"bz_rate":1,"num_hash":2},
+             "summernet":{"bz_rate":1,"d_conv":5},
          }
      }
 
@@ -217,8 +215,8 @@ image={
         "model":{
             "learn_pos_emb":True,
             "tied_weights":False,
-            "embedding_dim":64,
-            "transformer_dim":64,
+            "embedding_dim":256,
+            "transformer_dim":256,
             "transformer_hidden_dim":128,
             "head_dim":32,
             "num_head":2,
@@ -229,10 +227,9 @@ image={
             "attention_dropout":0.1,
             "pooling_mode":"MEAN",
             "num_classes": 10,
-            "d_conv": 5,
         },
         "training":{
-            "batch_size":256, 
+            "batch_size":128, 
             "learning_rate":0.0001, 
             "warmup":175,
             "lr_decay":"linear",
@@ -259,6 +256,7 @@ image={
             "informer":{"bz_rate":2,"in_nb_features":128},
             "bigbird":{"bz_rate":1,"num_random_blocks":3, "block_size":64},
             "reformer":{"bz_rate":1,"num_hash":2},
+            "summernet":{"bz_rate":1,"d_conv":5},
         }
 }
 

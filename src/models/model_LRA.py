@@ -6,6 +6,8 @@ import math
 from models.model_transformer import Model
 from models.summernet import SummeRNet
 
+no_attn = ["summernet"]
+
 def pooling(inp, mode):
     if mode == "CLS":
         pooled = inp[:, 0, :]
@@ -45,7 +47,10 @@ class ModelForSC(nn.Module):
         self.pooling_mode = config["pooling_mode"]
         self.vocab_size = config["vocab_size"]
 
-        self.model = Model(config)
+        if config["attn_type"] in no_attn:
+            self.model = SummeRNet(config)
+        else:
+            self.model = Model(config)
 
         self.seq_classifer = SCHead(config)
 
@@ -90,7 +95,10 @@ class ModelForSCDual(nn.Module):
         self.pooling_mode = config["pooling_mode"]
         self.vocab_size = config["vocab_size"]
         
-        self.model = Model(config)
+        if config["attn_type"] in no_attn:
+            self.model = SummeRNet(config)
+        else:
+            self.model = Model(config)
 
         self.seq_classifer = SCHeadDual(config)
 

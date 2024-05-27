@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore")
+
 import os
 import sys
 import argparse
@@ -7,6 +10,7 @@ import json
 import time
 import itertools
 from tqdm import tqdm
+from datetime import timedelta
 import numpy as np
 import torch
 from torch import nn
@@ -21,7 +25,7 @@ from models.dataset_LRA import LRADataset
 
 
 
-
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 def print_summary(summary, save_if_improved, model, checkpoint_path):
     summary["loss"] = np.mean(summary["loss"])
@@ -45,7 +49,8 @@ def print_summary(summary, save_if_improved, model, checkpoint_path):
     summary["accu"] = []
 
 def step_LRA(model, optimizer, lr_scheduler, ds_iter,amp_scaler,
-             accumu_steps, init_t, summary, component, step_idx, writer=None):
+             accumu_steps, init_t, summary, component, step_idx, 
+             writer=None, total_step=1):
     t0 = time.time()
 
     optimizer.zero_grad()
@@ -115,7 +120,8 @@ def step_LRA(model, optimizer, lr_scheduler, ds_iter,amp_scaler,
     time_since_start = time.time() - init_t
 
     if step_idx%100==0:
-        print(f"step={step_idx}, tt={time_since_start:.1f}, t={t_escape:.3f}, bs={batch_size}, lr={learning_rate:.6f}, loss={loss:.4f}, accu={accu:.4f}\t\t\t\t", end = "\r", flush = True)
+        td = timedelta(seconds=(total_step * (time_since_start/(step_idx + 1))))
+        print(f"step={step_idx}, tt={time_since_start:.1f}, t={t_escape:.3f}, tRem.={td}, bs={batch_size}, lr={learning_rate:.6f}, loss={loss:.4f}, accu={accu:.4f}\t\t\t\t", end = "\r", flush = True)
 
     summary[component]["t"] += t_escape
     summary[component]["loss"].append(loss)
@@ -139,16 +145,19 @@ def train_LRA(model, optimizer, lr_scheduler, ds_iter, amp_scaler,
     init_t = time.time()
 
     model.train()
+
     for train_step_idx in range(total_step):
         outputs = step_LRA(model, optimizer, lr_scheduler, ds_iter,amp_scaler,
-                           accumu_steps, init_t, summary, component='train', step_idx=train_step_idx,writer=writer)
+                           accumu_steps, init_t, summary, component='train', 
+                           step_idx=train_step_idx,writer=writer, total_step=total_step)
 
         if (train_step_idx + 1) % training_config["eval_frequency"] == 0:
             print_summary(summary["train"], False, model, checkpoint_path)
             model.eval()
             for dev_step_idx in range(training_config["num_eval_steps"]):
                 outputs = step_LRA(model, optimizer, lr_scheduler, ds_iter,amp_scaler,
-                                   accumu_steps, init_t, summary, component='dev', step_idx=dev_step_idx)
+                                   accumu_steps, init_t, summary, component='dev', 
+                                   step_idx=dev_step_idx, total_step=total_step)
             # dev_loss = np.mean(summary["dev"]["loss"])
             # if  dev_loss < best_dev_loss:
             #     best_dev_loss = dev_loss
@@ -191,7 +200,7 @@ def get_args():
     parser.add_argument("--checkpoint", type = str, default="test",
                         help="load ./checkpoints/model_name.model to evaluation")
     parser.add_argument("--attn", type = str, default="softmaxQKV",
-                        help = "softmax, nystrom, linformer, informer, performer, bigbird, sketched, skeinb,skein, skein0, skeini")
+                        help = "softmax, summernet, nystrom, linformer, informer, performer, bigbird, sketched, skeinb,skein, skein0, skeini")
     parser.add_argument("--task", type = str, default="lra-listops",
                         help = "lra-listops, lra-retrieval, lra-text, lra-pathfinder32-curv_contour_length_14")
     parser.add_argument('--random', type=int, default=42)
@@ -215,7 +224,8 @@ def main():
     model_config["random_seed"] = args.random
 
     training_config = Config[args.task]["training"]
-
+    #print(model_config)
+    #sys.exit(0)
     ### log preparation ###
     log_dir = './log-{}/'.format(args.random)
     if not os.path.exists(log_dir):

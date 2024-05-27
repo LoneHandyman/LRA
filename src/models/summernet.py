@@ -8,6 +8,23 @@ from typing import Type
 
 from einops import rearrange, repeat
 
+class RMSNorm(nn.Module):
+    def __init__(self, d_model: int, eps: float = 1e-5, elementwise_affine: bool=True):
+        super().__init__()
+        self.eps = eps
+        self.weight = None
+        
+        if elementwise_affine:
+            self.weight = nn.Parameter(torch.ones(d_model))
+
+    def forward(self, x):
+        output = x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+        
+        if self.weight is not None:
+            output = output * self.weight
+
+        return output
+
 class GlobalConv(nn.Module):
     def __init__(self, d_model: int, d_conv: int) -> None:
         super().__init__()
@@ -49,7 +66,8 @@ class Summer(nn.Module):
         self.gamma_log = nn.Parameter(gamma_log, requires_grad=True)
 
         self.dropout = nn.Dropout(p=0.2)
-        self.l_norm = nn.LayerNorm(self.d_model*2, elementwise_affine=False)
+        #self.norm = nn.LayerNorm(self.d_model*2, elementwise_affine=False)
+        self.norm = RMSNorm(self.d_model*2, elementwise_affine=False)
 
     def initializer(self):
         r_min, r_max = 0.9, 0.999
@@ -90,7 +108,7 @@ class Summer(nn.Module):
         )
 
         return self.out_proj(
-            self.l_norm(
+            self.norm(
                 self.dropout(
                     torch.cat([output_real, output_imag], dim=-1) * F.silu(g)
                 )
@@ -99,7 +117,7 @@ class Summer(nn.Module):
     
 class FeedForward(nn.Module):
     def __init__(self, d_model: int, hidden: int, dropout: int=0.1) -> None:
-        super(FeedForward, self).__init__()
+        super().__init__()
 
         self.w1 = nn.Linear(d_model, hidden)
         self.actv = nn.GELU()
@@ -115,14 +133,17 @@ class FeedForward(nn.Module):
         return x
     
 class SummeRBlock(nn.Module):
-    def __init__(self, d_model: int, d_conv: int, hidden: int, dropout: int) -> None:
+    def __init__(self, config) -> None:
         super().__init__()
-        self.token_mixer = Summer(d_model, d_conv)
-        self.channel_mixer = FeedForward(d_model, hidden, dropout)
+        d_model = config["transformer_dim"]
+        self.token_mixer = Summer(d_model, config["d_conv"])
+        self.channel_mixer = FeedForward(d_model, 
+                                         config["transformer_hidden_dim"], 
+                                         config["dropout_prob"])
 
         self.l_norm = nn.LayerNorm(d_model, elementwise_affine=False)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor, mask = None):
         x = x + self.token_mixer(x)
         x = self.l_norm(x + self.channel_mixer(x))
 
@@ -140,17 +161,13 @@ class SummeRNet(nn.Module):
         torch.nn.init.normal_(self.word_embeddings.weight, std = 0.02)
         self.dropout = nn.Dropout(p = config["dropout_prob"])
 
-        self.blocks = nn.ModuleList([SummeRBlock(config["transformer_dim"],
-                                                 config["d_conv"], 
-                                                 config["transformer_hidden_dim"],
-                                                 config["dropout_prob"]) 
-                                                 for _ in config["num_layers"]])
+        self.blocks = nn.ModuleList([SummeRBlock(config) for _ in range(config["num_layers"])])
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.word_embeddings(x)
+    def forward(self, input_ids: torch.Tensor, mask = None) -> torch.Tensor:
+        x = self.word_embeddings(input_ids)
         x = self.dropout(x)
 
         for block in self.blocks:
-            x = block(x)
+            x = block(x, mask)
 
         return x
