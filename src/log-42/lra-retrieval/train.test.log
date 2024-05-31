@@ -1,0 +1,73 @@
+[
+    {
+        "learn_pos_emb": true,
+        "tied_weights": false,
+        "embedding_dim": 256,
+        "transformer_dim": 256,
+        "transformer_hidden_dim": 128,
+        "head_dim": 32,
+        "num_head": 2,
+        "num_layers": 2,
+        "vocab_size": 512,
+        "max_seq_len": 4096,
+        "dropout_prob": 0.1,
+        "attention_dropout": 0.1,
+        "pooling_mode": "MEAN",
+        "num_classes": 2,
+        "bz_rate": 1,
+        "d_conv": 5,
+        "mixed_precision": true,
+        "attn_type": "summernet",
+        "random_seed": 42
+    },
+    {
+        "batch_size": 16,
+        "learning_rate": 0.0002,
+        "warmup": 800,
+        "lr_decay": "linear",
+        "weight_decay": 0,
+        "eval_frequency": 1000,
+        "num_train_steps": 50000,
+        "num_init_steps": 3000,
+        "num_eval_steps": 300,
+        "patience": 10
+    }
+]
+ModelForSCDual(
+  (model): SummeRNet(
+    (word_embeddings): Embedding(512, 256)
+    (dropout): Dropout(p=0.1, inplace=False)
+    (blocks): ModuleList(
+      (0-1): 2 x SummeRBlock(
+        (token_mixer): Summer(
+          (summ): GlobalConv(
+            (from_w): Linear(in_features=256, out_features=256, bias=False)
+            (conv): Conv1d(256, 256, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+          (in_proj): Linear(in_features=256, out_features=1024, bias=True)
+          (mid_proj): Linear(in_features=256, out_features=512, bias=True)
+          (out_proj): Linear(in_features=512, out_features=256, bias=True)
+          (dropout): Dropout(p=0.2, inplace=False)
+          (l_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=False)
+        )
+        (channel_mixer): FeedForward(
+          (w1): Linear(in_features=256, out_features=128, bias=True)
+          (actv): GELU(approximate='none')
+          (dropout): Dropout(p=0.1, inplace=False)
+          (w2): Linear(in_features=128, out_features=256, bias=True)
+        )
+        (l_norm): LayerNorm((256,), eps=1e-05, elementwise_affine=False)
+      )
+    )
+  )
+  (seq_classifer): SCHeadDual(
+    (mlpblock): Sequential(
+      (0): Linear(in_features=1024, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=2, bias=True)
+    )
+  )
+)
+parameter_size: [torch.Size([512, 256]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256, 256, 5]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([512, 256]), torch.Size([512]), torch.Size([256, 512]), torch.Size([256]), torch.Size([128, 256]), torch.Size([128]), torch.Size([256, 128]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256, 256, 5]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([512, 256]), torch.Size([512]), torch.Size([256, 512]), torch.Size([256]), torch.Size([128, 256]), torch.Size([128]), torch.Size([256, 128]), torch.Size([256]), torch.Size([128, 1024]), torch.Size([128]), torch.Size([2, 128]), torch.Size([2])]
+num_parameter: 2235010
+Loaded ./data/lra_processed/lra-retrieval.train.pickle... size=147086

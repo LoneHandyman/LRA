@@ -1,5 +1,7 @@
 torch
 transformers
+triton
+tqdm
 performer-pytorch
 tensorboard
 axial_positional_embedding
@@ -8,6 +10,12 @@ fsspec
 wrapt
 opt_einsum
 gast
+gdown
+google_drive_downloader
+bs4
 astunparse
+absl-py
 psutil
+numpy
 einops
+pickle

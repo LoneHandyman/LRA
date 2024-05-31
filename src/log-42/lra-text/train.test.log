@@ -1,0 +1,141 @@
+[
+    {
+        "learn_pos_emb": true,
+        "tied_weights": false,
+        "embedding_dim": 256,
+        "transformer_dim": 256,
+        "transformer_hidden_dim": 1024,
+        "head_dim": 64,
+        "num_head": 4,
+        "num_layers": 4,
+        "vocab_size": 512,
+        "max_seq_len": 4096,
+        "dropout_prob": 0.1,
+        "attention_dropout": 0.1,
+        "pooling_mode": "MEAN",
+        "num_classes": 2,
+        "bz_rate": 1,
+        "nb_features": 128,
+        "sketched_kernel": "kernel_RS_RBF",
+        "accumulation": 1,
+        "sampling_factor": 4,
+        "no_projection": false,
+        "mixed_precision": true,
+        "attn_type": "skyformer",
+        "random_seed": 42
+    },
+    {
+        "batch_size": 4,
+        "learning_rate": 0.0001,
+        "warmup": 80,
+        "lr_decay": "linear",
+        "weight_decay": 0,
+        "eval_frequency": 500,
+        "num_train_steps": 50000,
+        "num_init_steps": 3000,
+        "num_eval_steps": 200,
+        "patience": 10
+    }
+]
+ModelForSC(
+  (model): Model(
+    (embeddings): Embeddings(
+      (word_embeddings): Embedding(512, 256)
+      (position_embeddings): Embedding(4096, 256)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (transformer_0): TransformerLayer(
+      (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mha): Attention(
+        (W_q): Linear(in_features=256, out_features=256, bias=True)
+        (W_k): Linear(in_features=256, out_features=256, bias=True)
+        (W_v): Linear(in_features=256, out_features=256, bias=True)
+        (attn): Skyformer()
+        (ff): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (dropout1): Dropout(p=0.1, inplace=False)
+      (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mlpblock): Sequential(
+        (0): Linear(in_features=256, out_features=1024, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.1, inplace=False)
+        (3): Linear(in_features=1024, out_features=256, bias=True)
+        (4): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (transformer_1): TransformerLayer(
+      (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mha): Attention(
+        (W_q): Linear(in_features=256, out_features=256, bias=True)
+        (W_k): Linear(in_features=256, out_features=256, bias=True)
+        (W_v): Linear(in_features=256, out_features=256, bias=True)
+        (attn): Skyformer()
+        (ff): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (dropout1): Dropout(p=0.1, inplace=False)
+      (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mlpblock): Sequential(
+        (0): Linear(in_features=256, out_features=1024, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.1, inplace=False)
+        (3): Linear(in_features=1024, out_features=256, bias=True)
+        (4): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (transformer_2): TransformerLayer(
+      (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mha): Attention(
+        (W_q): Linear(in_features=256, out_features=256, bias=True)
+        (W_k): Linear(in_features=256, out_features=256, bias=True)
+        (W_v): Linear(in_features=256, out_features=256, bias=True)
+        (attn): Skyformer()
+        (ff): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (dropout1): Dropout(p=0.1, inplace=False)
+      (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mlpblock): Sequential(
+        (0): Linear(in_features=256, out_features=1024, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.1, inplace=False)
+        (3): Linear(in_features=1024, out_features=256, bias=True)
+        (4): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (transformer_3): TransformerLayer(
+      (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mha): Attention(
+        (W_q): Linear(in_features=256, out_features=256, bias=True)
+        (W_k): Linear(in_features=256, out_features=256, bias=True)
+        (W_v): Linear(in_features=256, out_features=256, bias=True)
+        (attn): Skyformer()
+        (ff): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (dropout1): Dropout(p=0.1, inplace=False)
+      (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+      (mlpblock): Sequential(
+        (0): Linear(in_features=256, out_features=1024, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.1, inplace=False)
+        (3): Linear(in_features=1024, out_features=256, bias=True)
+        (4): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+  )
+  (seq_classifer): SCHead(
+    (mlpblock): Sequential(
+      (0): Linear(in_features=256, out_features=1024, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=1024, out_features=2, bias=True)
+    )
+  )
+)
+parameter_size: [torch.Size([512, 256]), torch.Size([4096, 256]), torch.Size([256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([256, 1024]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([256, 1024]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([256, 1024]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256, 256]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([256, 1024]), torch.Size([256]), torch.Size([256]), torch.Size([256]), torch.Size([1024, 256]), torch.Size([1024]), torch.Size([2, 1024]), torch.Size([2])]
+num_parameter: 4604418
+Loaded ./data/lra_processed/lra-text.train.pickle... size=25000
+Loaded ./data/lra_processed/lra-text.dev.pickle... size=25000
+Loaded ./data/lra_processed/lra-text.test.pickle... size=25000
+accumu_steps=1
+step=0, tt=2.0, t=1.992, tRem.=1 day, 3:40:12.891674, bs=4, lr=0.000005, loss=0.6973, accu=0.2500				step=100, tt=70.2, t=0.706, tRem.=9:39:05.006986, bs=4, lr=0.000100, loss=0.6968, accu=0.5000				step=200, tt=138.9, t=0.672, tRem.=9:36:00.264818, bs=4, lr=0.000100, loss=0.7041, accu=0.2500				step=300, tt=209.4, t=0.735, tRem.=9:39:50.612297, bs=4, lr=0.000100, loss=0.6790, accu=0.5000				step=400, tt=280.3, t=0.745, tRem.=9:42:32.994862, bs=4, lr=0.000099, loss=0.7122, accu=0.2500				{'t': 347.9216, 'loss': 0.7017, 'accu': 0.489, 'best_accu': 0.489, 'component': 'train'}
+step=0, tt=349.9, t=0.185, tRem.=202 days, 11:44:47.361336, bs=4, lr=0.000099, loss=0.7533, accu=0.2500				step=100, tt=370.6, t=0.180, tRem.=2 days, 2:57:30.585073, bs=4, lr=0.000099, loss=0.6918, accu=0.5000				{'t': 36.0046, 'loss': 0.6944, 'accu': 0.5012, 'best_accu': 0.5012, 'component': 'dev'}
+step=500, tt=392.1, t=0.732, tRem.=10:52:09.526815, bs=4, lr=0.000099, loss=0.6848, accu=0.7500				step=600, tt=463.6, t=0.689, tRem.=10:42:51.676121, bs=4, lr=0.000099, loss=0.6938, accu=0.5000				step=700, tt=537.9, t=0.785, tRem.=10:39:29.510245, bs=4, lr=0.000099, loss=0.6919, accu=0.5000				step=800, tt=608.9, t=0.711, tRem.=10:33:26.837404, bs=4, lr=0.000099, loss=0.7188, accu=0.5000				step=900, tt=680.4, t=0.699, tRem.=10:29:18.917417, bs=4, lr=0.000098, loss=0.6627, accu=0.7500				
