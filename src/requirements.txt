@@ -16,4 +16,4 @@ absl-py
 psutil
 numpy
 einops
-pickle
+pickle5
