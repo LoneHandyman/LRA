@@ -164,7 +164,7 @@ def train_LRA(model, optimizer, lr_scheduler, ds_iter, amp_scaler,
             dev_accu = np.mean(summary["dev"]["accu"])
             if dev_accu > best_dev_accu:
                 best_dev_accu = dev_accu
-                if (train_step_idx + 1) > total_step * 0.2:
+                if (train_step_idx + 1) > total_step * 0.05:
                     torch.save({"model_state_dict":model.state_dict()}, checkpoint_path)
                     print('best model saved: step = ',train_step_idx, 'dev accu = ',dev_accu)
 
